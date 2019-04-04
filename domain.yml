@@ -1,0 +1,37 @@
+%YAML 1.1
+---
+actions:
+- utter_noworries
+- utter_greet
+- utter_goodbye
+- utter_early_leave
+- utter_days_off
+- utter_expense_compensation
+- utter_ask_options_type
+intents:
+- greet
+- bye
+- thankyou
+- early_leave
+- days_off
+- expense_compensation
+templates:
+  utter_ask_options_type:
+  - text: Choose one of the following; Early leave, Days off or Expense compensation.
+  utter_goodbye:
+  - text: Talk to you later!
+  - text: Have a good day.
+  - text: Until next time!
+  utter_greet:
+  - text: Hi. What are you looking for?
+  - text: 'Hey there! Please choose one of the options:'
+  - text: Hello! What can I help you find today?
+  utter_noworries:
+  - text: My pleasure.
+  - text: You are welcome!
+  utter_early_leave:
+  - text: "https://goo.gl/forms/A3JYX7BHXfCIi6203"	
+  utter_days_off:
+  - text: https://goo.gl/forms/4jLxcn75DSLvCj8C3
+  utter_expense_compensation:
+  - text: https://goo.gl/forms/mGHN1itBjMDCogDA2

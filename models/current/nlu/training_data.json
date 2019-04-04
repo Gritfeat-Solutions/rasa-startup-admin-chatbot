@@ -1,0 +1,241 @@
+{
+  "rasa_nlu_data": {
+    "common_examples": [
+      {
+        "intent": "bye",
+        "text": "Bye"
+      },
+      {
+        "intent": "bye",
+        "text": "Goodbye"
+      },
+      {
+        "intent": "bye",
+        "text": "See you later"
+      },
+      {
+        "intent": "bye",
+        "text": "Bye bot"
+      },
+      {
+        "intent": "bye",
+        "text": "Goodbye friend"
+      },
+      {
+        "intent": "bye",
+        "text": "bye"
+      },
+      {
+        "intent": "bye",
+        "text": "bye for now"
+      },
+      {
+        "intent": "bye",
+        "text": "catch you later"
+      },
+      {
+        "intent": "bye",
+        "text": "gotta go"
+      },
+      {
+        "intent": "bye",
+        "text": "See you"
+      },
+      {
+        "intent": "bye",
+        "text": "goodnight"
+      },
+      {
+        "intent": "bye",
+        "text": "have a nice day"
+      },
+      {
+        "intent": "bye",
+        "text": "i'm off"
+      },
+      {
+        "intent": "bye",
+        "text": "see you later alligator"
+      },
+      {
+        "intent": "bye",
+        "text": "we'll speak soon"
+      },
+      {
+        "intent": "greet",
+        "text": "Hi"
+      },
+      {
+        "intent": "greet",
+        "text": "Hey"
+      },
+      {
+        "intent": "greet",
+        "text": "Hi bot"
+      },
+      {
+        "intent": "greet",
+        "text": "Hey bot"
+      },
+      {
+        "intent": "greet",
+        "text": "Hello"
+      },
+      {
+        "intent": "greet",
+        "text": "good morning"
+      },
+      {
+        "intent": "greet",
+        "text": "hi again"
+      },
+      {
+        "intent": "greet",
+        "text": "hi folks"
+      },
+      {
+        "intent": "greet",
+        "text": "hi Mister"
+      },
+      {
+        "intent": "greet",
+        "text": "hi pal!"
+      },
+      {
+        "intent": "greet",
+        "text": "hi there"
+      },
+      {
+        "intent": "greet",
+        "text": "greetings"
+      },
+      {
+        "intent": "greet",
+        "text": "hello everybody"
+      },
+      {
+        "intent": "greet",
+        "text": "hello is anybody there"
+      },
+      {
+        "intent": "greet",
+        "text": "hello robot"
+      },
+      {
+        "intent": "greet",
+        "text": "hi"
+      },
+      {
+        "intent": "thankyou",
+        "text": "Thanks"
+      },
+      {
+        "intent": "thankyou",
+        "text": "Thank you"
+      },
+      {
+        "intent": "thankyou",
+        "text": "Thank you so much"
+      },
+      {
+        "intent": "thankyou",
+        "text": "Thanks bot"
+      },
+      {
+        "intent": "thankyou",
+        "text": "Thanks for that"
+      },
+      {
+        "intent": "thankyou",
+        "text": "cheers"
+      },
+      {
+        "intent": "thankyou",
+        "text": "cheers bro"
+      },
+      {
+        "intent": "thankyou",
+        "text": "ok thanks!"
+      },
+      {
+        "intent": "thankyou",
+        "text": "perfect thank you"
+      },
+      {
+        "intent": "thankyou",
+        "text": "thanks a bunch for everything"
+      },
+      {
+        "intent": "thankyou",
+        "text": "thanks for the help"
+      },
+      {
+        "intent": "thankyou",
+        "text": "thanks a lot"
+      },
+      {
+        "intent": "thankyou",
+        "text": "amazing, thanks"
+      },
+      {
+        "intent": "thankyou",
+        "text": "cool, thanks"
+      },
+      {
+        "intent": "thankyou",
+        "text": "cool thank you"
+      },
+      {
+        "intent": "early_leave",
+        "text": "early leave"
+      },
+      {
+        "intent": "early_leave",
+        "text": "Early leave"
+      },
+      {
+        "intent": "early_leave",
+        "text": "I need to leave early"
+      },
+      {
+        "intent": "early_leave",
+        "text": "leave early"
+      },
+      {
+        "intent": "early_leave",
+        "text": "About early leave"
+      },
+      {
+        "intent": "days_off",
+        "text": "days off"
+      },
+      {
+        "intent": "days_off",
+        "text": "Days off"
+      },
+      {
+        "intent": "days_off",
+        "text": "I need a day off"
+      },
+      {
+        "intent": "days_off",
+        "text": "Aout day off"
+      },
+      {
+        "intent": "expense_compensation",
+        "text": "expense compensation"
+      },
+      {
+        "intent": "expense_compensation",
+        "text": "Expense compensation"
+      },
+      {
+        "intent": "expense_compensation",
+        "text": "About expense compensation"
+      }
+    ],
+    "regex_features": [],
+    "lookup_tables": [],
+    "entity_synonyms": []
+  }
+}
