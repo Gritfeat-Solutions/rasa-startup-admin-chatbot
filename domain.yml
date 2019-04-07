@@ -18,6 +18,14 @@ intents:
 templates:
   utter_ask_options_type:
   - text: Choose one of the following; Early leave, Days off or Expense compensation.
+  - text: Hey there! Please choose one of the option below
+    buttons:
+    - title: "Early leave"
+      payload: "Early leave"
+    - title: "Days off"
+      payload: "Days off"
+    - title: "Expense compensation"
+      payload: "Expense compensation"
   utter_goodbye:
   - text: Talk to you later!
   - text: Have a good day.
