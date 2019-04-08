@@ -1,6 +1,22 @@
 A very basic RASA based chatbot, integrated with RocketChat, that can assist with some of the administrative purposes like Days Off Requests, Leave Early Requests etc.
 
+# How to install and setup rasa-startup-admin-chatbot
 
+Step 1: To install admin-chatbot, please clone the repo:
+
+`git clone https://github.com/Gritfeat-Solutions/rasa-startup-admin-chatbot.git`
+`cd admin-chatbot`
+Use the requirements.txt file to install the appropriate dependencies via pip. 
+
+Step 2: Install requirements:
+`pip3 install -r requirements.txt`
+
+
+Step 3: Install the spaCy English language model by running:
+
+`python3 -m spacy download en`
+
+This will install the bot and all of its requirements.
 
 # How to run admin-chatbot  
 1.To train the dialogue model  
