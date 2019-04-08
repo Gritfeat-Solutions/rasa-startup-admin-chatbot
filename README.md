@@ -27,7 +27,7 @@ This will install the bot and all of its requirements.
 `python3 -m rasa_core.train -d domain.yml -s data/core -o models/current/dialogue -c core_config.yml`
 
 This will train the Rasa Core model and store it inside the /models/current/dialogue folder of your project directory.
-Before training dialogue model edit domain.yml file as required. (for example, adding your form links (G-drive/or any) to the respective field inside templates.)
+Before training dialogue model edit domain.yml file as required. (for example, adding your form links (G-drive/or any) to the respective field inside templates).
 
 2. To train the NLU model  
 
