@@ -4,16 +4,15 @@ A very basic RASA based chatbot, integrated with RocketChat, that can assist wit
 
 Step 1: To install admin-chatbot, please clone the repo:
 
-`git clone https://github.com/Gritfeat-Solutions/rasa-startup-admin-chatbot.git
+`git clone https://github.com/Gritfeat-Solutions/rasa-startup-admin-chatbot.git`
 
-cd admin-chatbot`
+`cd admin-chatbot`
 
 Use the requirements.txt file to install the appropriate dependencies via pip. 
 
 Step 2: Install requirements:
 
 `pip3 install -r requirements.txt`
-
 
 Step 3: Install the spaCy English language model by running:
 
