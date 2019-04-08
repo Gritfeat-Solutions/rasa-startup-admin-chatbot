@@ -38,8 +38,8 @@ templates:
   - text: My pleasure.
   - text: You are welcome!
   utter_early_leave:
-  - text: "https://goo.gl/forms/A3JYX7BHXfCIi6203"	
+  - text: Link to your early leave form.	
   utter_days_off:
-  - text: https://goo.gl/forms/4jLxcn75DSLvCj8C3
+  - text: Link to your days off form.
   utter_expense_compensation:
-  - text: https://goo.gl/forms/mGHN1itBjMDCogDA2
+  - text: Link to your expense compensation form.
