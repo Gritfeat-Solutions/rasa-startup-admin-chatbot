@@ -1,8 +1,8 @@
 A very basic RASA based chatbot, integrated with RocketChat, that can assist with some of the administrative purposes like Days Off Requests, Leave Early Requests etc.
 
 # How to run admin-chatbot  
-1.To train the dialogue model  
-`python3 -m rasa_core.train -d domain.yml -s data/core -o models/current/dialogue -c core_config.yml`
+1. To train the dialogue model  
+  `python3 -m rasa_core.train -d domain.yml -s data/core -o models/current/dialogue -c core_config.yml`
 
 2. To train the NLU model  
 `python3  -m rasa_nlu.train -c nlu_config.yml --data data/nlu_data.md -o models --fixed_model_name nlu --project current --verbose`  
