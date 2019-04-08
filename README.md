@@ -22,7 +22,7 @@ This will install the bot and all of its requirements.
 
 # How to run admin-chatbot  
 
-1.To train the dialogue model  
+1. To train the dialogue model  
 
 `python3 -m rasa_core.train -d domain.yml -s data/core -o models/current/dialogue -c core_config.yml`
 
