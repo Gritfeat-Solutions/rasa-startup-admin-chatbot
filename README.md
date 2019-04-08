@@ -42,15 +42,18 @@ The parameter provided are configuration file, data and path to save NLU model a
 This will start your bot in terminal and you can start chatting with it.
 
 4. Specify port you want to expose to public internet by using ngrok:  
+
 To create a local webhook from your machine you can use Ngrok. Follow the instructions on their site to set it up on your computer. Move ngrok to your working directory and in a new terminal run:
 
 `./ngrok http 5000`
 
 5. Set up Rocket.Chat by logging as administrator 
+
 To set up Rocket.Chat perform the steps mentioned [here](https://rasa.com/docs/core/connectors/#rocketchat-setup).
 Your url will be something like this: `https://xxxxxxx.ngrok.io/webhooks/rocketchat/webhook`. You will have to change url everytime you redo step 4.
 
 6. Run the command below for integration  
+
 Go to the credentials.yml file that you downloaded from the repo and input your user, password and server-url.
 
 `python3 -m rasa_core.run -d models/current/dialogue -u models/current/nlu --port 5000 --credentials credentials.yml`
