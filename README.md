@@ -47,7 +47,7 @@ To create a local webhook from your machine you can use Ngrok. Follow the instru
 `./ngrok http 5000`
 
 5. Set up Rocket.Chat by logging as administrator 
-To set up Rocket.Chat perform the steps mentioned [here](https://rasa.com/docs/core/connectors/#rocketchat-setup)
+To set up Rocket.Chat perform the steps mentioned [here](https://rasa.com/docs/core/connectors/#rocketchat-setup).
 Your url will be something like this: `https://xxxxxxx.ngrok.io/webhooks/rocketchat/webhook`. You will have to change url everytime you redo step 4.
 
 6. Run the command below for integration  
