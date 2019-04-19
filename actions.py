@@ -86,11 +86,11 @@ class DaysOffMail(Action):
 
 		msg = EmailMessage()
 		msg['Subject'] = 'Days Off Request'
-		msg['From'] = 'sending_email_address'  
-		msg['To'] = 'receiving_email_address'
+		msg['From'] = 'sending_email_address'  #sender's email address
+		msg['To'] = 'receiving_email_address'  #receiver's email address
 
 		msg.set_content('Hi,\nOur member {} has submitted a days off request starting from {} to {} (if both dates are same, its a one day leave request). The reason for the leave request is \"{}\" currently \"{}\". Please acknowledge this request. \nYour\'s sincerely,\nYour-bot'.format(user, start, end, reason, pending)) 
 
 		with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-			smtp.login('EMAIL_ADDRESS', 'PASSWORD')
+			smtp.login('EMAIL_ADDRESS', 'PASSWORD')	#replace with your email and password
 			smtp.send_message(msg)
