@@ -1,45 +1,103 @@
 %YAML 1.1
 ---
 actions:
+- action_user_name
 - utter_noworries
-- utter_greet
+- utter_ask_work_incharge
+- utter_date
+- action_days_off_mail
+- action_ask_reason
 - utter_goodbye
-- utter_early_leave
+- utter_greet
+- utter_ask_end_date
+- action_end_date
+- utter_ask_start_date
+- action_start_date
 - utter_days_off
 - utter_expense_compensation
+- action_ask_pending
+- utter_early_leave
+- action_set_meeting
+- utter_ask_attendees
+- action_start_time
+- utter_confirm
 - utter_ask_options_type
+- action_slot_reset
+- utter_ask_user_name
+- utter_mail_send
+- utter_confirmation
+- utter_ask_reason
+entities:
+- date
+- name
 intents:
+- days_off
+- work_incharge
+- inform
+- affirmation
+- days_off_reason
+- name
 - greet
 - bye
 - thankyou
 - early_leave
-- days_off
 - expense_compensation
+slots:
+  from:
+    type: text
+  name:
+    type: text
+  pending:
+    type: text
+  reason:
+    type: text
+  to:
+    type: text
 templates:
+  utter_ask_end_date:
+  - text: Please provide the end date of your leave. Provide Same date if its a one
+      day leave request (in the format YYYY-MM-DD)
   utter_ask_options_type:
   - text: Choose one of the following; Early leave, Days off or Expense compensation.
-  - text: Hey there! Please choose one of the option below
-    buttons:
-    - title: "Early leave"
-      payload: "Early leave"
-    - title: "Days off"
-      payload: "Days off"
-    - title: "Expense compensation"
-      payload: "Expense compensation"
-  utter_goodbye:
-  - text: Talk to you later!
-  - text: Have a good day.
-  - text: Until next time!
-  utter_greet:
-  - text: Hi. What are you looking for?
-  - text: 'Hey there! Please choose one of the options:'
-  - text: Hello! What can I help you find today?
-  utter_noworries:
-  - text: My pleasure.
-  - text: You are welcome!
+  - buttons:
+    - payload: 'Early leave'
+      title: Early leave
+    - payload: 'Days off'
+      title: Days off
+    - payload: 'Expense compensation'
+      title: Expense compensation
+    text: Hey there! Please choose one of the option below
+  utter_ask_reason:
+  - text: Provide the reason of your leave request
+  utter_ask_start_date:
+  - text: Please provide the start date of your leave ( in the format YYYY-MM-DD )
+  utter_ask_user_name:
+  - text: What is your name?
+  - text: Please provide your name.
+  utter_ask_work_incharge:
+  - text: Do you have any pending tasks in progress? Anyone else in-charge?
+  utter_confirm:
+  - text: I have sent meeting invitation to the attendees. Your meeting has been set.
+  utter_confirmation:
+  - text: '{name} want a leave request starting {from} to {to} with the reason "{reason}".
+      About your tasks, you answered "{pending}". Do you wish to continue with these
+      request?'
   utter_early_leave:
   - text: Link to your early leave form.	
   utter_days_off:
   - text: Link to your days off form.
   utter_expense_compensation:
   - text: Link to your expense compensation form.
+  utter_goodbye:
+  - text: Talk to you later!
+  - text: Have a good day.
+  - text: Until next time!
+  utter_greet:
+  - text: Hi. What are you looking for?
+  - text: Hey there! Please choose one of the options:
+  - text: Hello! What can I help you find today?
+  utter_mail_send:
+  - text: You request has been successfully submitted.
+  utter_noworries:
+  - text: My pleasure.
+  - text: You are welcome!
