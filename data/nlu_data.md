@@ -50,6 +50,81 @@
 - cool, thanks
 - cool thank you
 
+## intent:inform
+- [2019-04-16](date)
+- [2019-04-19](date)
+- [2019-04-17](date)
+- [2019-04-20](date)
+- [2019-04-28](date)
+- [2019-04-25](date)
+- [2019-04-29](date)
+- [2019-04-30](date)
+- [2019-05-01](date)
+
+
+##intent:name
+- My name is [Elisha](name)
+- I am [Aayush](name)
+- My name is [Success](name)
+- [Rojina](name)
+- my name is [mukesh](name)
+- I am [monika](name)
+- my name is [sujen](name)
+- [enosh](name)
+- my name is [madhav](name)
+- Mr. [aayush](name)
+- The name is [Monica](name)
+- [sujen](name)
+- The name is [sonica](name)
+- [success](name)
+- The name is [Monica](name)
+- [success maharjan](name)
+- [elisha shrestha](name)
+- [sujen maharjan](name)
+- [aayush bhattarai](name)
+- [madhav pandey](name)
+- [enosh shrestha](name)
+- [rojina maharjan](name)
+- [mukesh maharjan](name)
+- [sonika maharjan](name)
+- [monica subba](name)
+- [monica](name)
+- [elisha](name)
+- [aayush](name)
+- [mukesh](name)
+- [sonika](name)
+- [madhav](name)
+
+## intent: days_off_reason
+- i am sick 
+- birthday 
+- sick leave
+- family function
+- outing with friends
+- i have a dinner with family
+- i need to attend a wedding
+- dinner
+- i have a severe fever
+- fever 
+- wedding 
+- to see off a friend
+- not feeling well
+- i have an important class tomorrow at college
+- i will be out of town
+
+## intent: work_incharge
+- i am independently working on my project
+- i dont have any pending tasks
+- yes i have a pending task. i shall complete it when i return
+- i do have a pending task. Sujen is incharge
+- Sujen is incharge
+- Madhav is incharge
+- Rojina is incharge
+- Mukesh is incharge
+- Success is incharge
+- i have no pending tasks
+- i have completed all of my current tasks
+
 ## intent:early_leave
 - early leave
 - Early leave
