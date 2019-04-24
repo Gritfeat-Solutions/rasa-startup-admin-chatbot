@@ -50,17 +50,33 @@
 - cool, thanks
 - cool thank you
 
-## intent:inform
-- [2019-04-16](date)
-- [2019-04-19](date)
-- [2019-04-17](date)
-- [2019-04-20](date)
-- [2019-04-28](date)
-- [2019-04-25](date)
-- [2019-04-29](date)
-- [2019-04-30](date)
-- [2019-05-01](date)
+## intent:meeting
+- hey! I want to schedule meeting
+- meeting
+- i want a meeting to be scheduled
+- meetings
+- invite for meetings
+- invite people for meeting
+- please schedule a meeting
+- schedule a meeting
+- meeting schedule
+- appoint meeting
 
+## intent:inform
+- Monday
+- 5th May
+- Tomorrow
+- Today 
+- Wednesday
+- Friday 
+- 26th April
+- 14th May
+- [aayush@gritfeat.com](email)
+- [rojina@gritfeat.com](email)
+- [sujen@gritfeat.com](email)
+- [mukesh@gritfeat.com](email)
+- [success@gritfeat.com](email)
+- [madhav@gritfeat.com](email)
 
 ##intent:name
 - My name is [Elisha](name)
@@ -94,10 +110,9 @@
 - [mukesh](name)
 - [sonika](name)
 - [madhav](name)
-
 ## intent: days_off_reason
-- i am sick 
-- birthday 
+- i am sick
+- birthday
 - sick leave
 - family function
 - outing with friends
@@ -105,7 +120,7 @@
 - i need to attend a wedding
 - dinner
 - i have a severe fever
-- fever 
+- fever
 - wedding 
 - to see off a friend
 - not feeling well
@@ -122,6 +137,7 @@
 - Rojina is incharge
 - Mukesh is incharge
 - Success is incharge
+- i am my own incharge
 - i have no pending tasks
 - i have completed all of my current tasks
 
@@ -134,11 +150,38 @@
 
 ## intent:days_off
 - days off
+- day off request
 - Days off
 - I need a day off
-- Aout day off
+- About day off
 
 ## intent:expense_compensation
 - expense compensation
+- conpensation
+- Compensation
+- expensecompensation
 - Expense compensation
+- Expense Compensation
 - About expense compensation 
+
+## intent: affirmation
+- yes
+- yes sure
+- absolutely
+- for sure
+- yes yes yes
+- definitely
+- yeah
+- si
+- ok
+- okay
+
+## intent:deny
+- no
+- not today
+- no thanks
+- no thank you
+- uh no
+- noope
+- do you have something else
+- no this does not work for me
