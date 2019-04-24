@@ -1,72 +1,108 @@
-# -*- coding: utf-8 -*-	
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
-from __future__ import print_function
+# -*- coding: utf-8 -*-
+import datetime
+from typing import Dict, Text, Any, List, Union
 
-from rasa_core_sdk import Tracker
-from rasa_core_sdk.executor import CollectingDispatcher
-
-from typing import Dict, Text, Any, List
-
-import requests
-from rasa_core_sdk import Action
 from rasa_core_sdk import ActionExecutionRejection
-from rasa_core_sdk.events import UserUtteranceReverted
-from rasa_core_sdk.events import SlotSet, FollowupAction
+from rasa_core_sdk import Tracker
+from rasa_core_sdk.events import SlotSet
+from rasa_core_sdk.executor import CollectingDispatcher
 from rasa_core_sdk.forms import FormAction, REQUESTED_SLOT
-from rasa_core_sdk.events import AllSlotsReset
-from rasa_core_sdk.events import Restarted
+from rasa_core_sdk import Action
 
-class AskStartDate(Action):
-	def name(self):
-		return 'action_start_date'
-		
-	def run(self, dispatcher, tracker, domain):
-		start = next(tracker.get_latest_entity_values("date"), None)
-		if not start:
-			dispatcher.utter_message("Please enter a start date of your leave(YYYY-MM-DD)")
-			return [UserUtteranceReverted()]
-		return [SlotSet('from',start)]
+class DaysOffForm(FormAction):
+    """Example of a custom form action"""
 
-class AskEndDate(Action):
-	def name(self):
-		return 'action_end_date'
-		
-	def run(self, dispatcher, tracker, domain):
-		end = next(tracker.get_latest_entity_values("date"), None)
-		if not end:
-			dispatcher.utter_message("Please provide end date of your leave(YYYY-MM-DD)")
-			return [UserUtteranceReverted()]
-		return [SlotSet('to',end)]
+    def name(self):
+        # type: () -> Text
+        """Unique identifier of the form"""
 
-class AskReason(Action):
-	def name(self):
-		return 'action_ask_reason'
+        return "days_off_form"
 
-	def run(self, dispatcher, tracker, domain):
-		personal = tracker.latest_message.get('text')
-		return [SlotSet('reason',personal)]
 
-class AskPending(Action):
-	def name(self):
-		return 'action_ask_pending'
-	
-	def run(self, dispatcher, tracker,domain):
-		message = tracker.latest_message.get('text')
-		return [SlotSet('pending',message)]
+    @staticmethod
+    def required_slots(tracker: Tracker) -> List[Text]:
+        """A list of required slots that the form has to fill"""
 
-class GetUserNAme(Action):
-	def name(self):
-		return 'action_user_name'
+        return ["name", "from", "to",
+                "reason", "pending"]
 
-	def run(self, dispatcher, tracker, domain):
-		user_name = next(tracker.get_latest_entity_values("name"), None)
-		if not user_name:
-			dispatcher.utter_message("Please enter your name")
-			return [UserUtteranceReverted()]
-		return [SlotSet('name', user_name)]
+    def slot_mappings(self):
+        # type: () -> Dict[Text: Union[Dict, List[Dict]]]
+        """A dictionary to map required slots to
+            - an extracted entity
+            - intent: value pairs
+            - a whole message
+            or a list of them, where a first match will be picked"""
+
+        return {"name": [self.from_entity(entity="name"),self.from_text()],
+                "from": [self.from_text()],
+                "to": [self.from_text()],
+                "reason": [self.from_text(intent='days_off_reason'),
+                                self.from_text()],
+                "pending": [self.from_text(intent='pending'), self.from_text()]}
+    @staticmethod
+    def date_validation(date_text) -> bool:
+        try:
+            datetime.datetime.strptime(date_text, '%Y-%m-%d')
+            return True
+        except:
+            return False
+
+
+    def validate(self,
+                 dispatcher: CollectingDispatcher,
+                 tracker: Tracker,
+                 domain: Dict[Text, Any]) -> List[Dict]:
+        """Validate extracted requested slot
+            else reject the execution of the form action
+        """
+        # extract other slots that were not requested
+        # but set by corresponding entity
+        slot_values = self.extract_other_slots(dispatcher, tracker, domain)
+
+        # extract requested slot
+        slot_to_fill = tracker.get_slot(REQUESTED_SLOT)
+        if slot_to_fill:
+            slot_values.update(self.extract_requested_slot(dispatcher,
+                                                           tracker, domain))
+            if not slot_values:
+                # reject form action execution
+                # if some slot was requested but nothing was extracted
+                # it will allow other policies to predict another action
+                raise ActionExecutionRejection(self.name(),
+                                               "Failed to validate slot {0} "
+                                               "with action {1}"
+                                               "".format(slot_to_fill,
+                                                         self.name()))
+
+        # we'll check when validation failed in order
+        # to add appropriate utterances
+        for slot, value in slot_values.items():
+            if slot == 'from':
+                if self.date_validation(value)==False:
+                    dispatcher.utter_template('utter_wrong_format',tracker)
+                    slot_values[slot] = None
+
+            if slot == 'to':
+                if self.date_validation(value)==False:
+                    dispatcher.utter_template('utter_wrong_format',tracker)
+                    slot_values[slot] = None
+
+
+        # validation succeed, set the slots values to the extracted values
+        return [SlotSet(slot, value) for slot, value in slot_values.items()]
+
+    def submit(self,
+               dispatcher: CollectingDispatcher,
+               tracker: Tracker,
+               domain: Dict[Text, Any]) -> List[Dict]:
+        """Define what the form has to do
+            after all required slots are filled"""
+
+        # utter submit template
+        dispatcher.utter_template('utter_submit', tracker)
+        return []
+
 
 
 class DaysOffMail(Action):
