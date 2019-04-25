@@ -93,14 +93,6 @@ templates:
        - to: {to}(same date for one day leave)\n\
        - leave reason: {reason}\n 
        - task & incharge: {pending}\nDo you wish to continue with these request?"
-  utter_days_off:
-  - text: https://goo.gl/forms/4jLxcn75DSLvCj8C3
-  utter_early_leave:
-  - text: https://goo.gl/forms/A3JYX7BHXfCIi6203
-  utter_ending_time:
-  - text: Please provide ending time of the meeting.
-  utter_expense_compensation:
-  - text: https://goo.gl/forms/mGHN1itBjMDCogDA2
   utter_goodbye:
   - text: Talk to you later!
   - text: Have a good day.
