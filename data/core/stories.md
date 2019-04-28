@@ -6,56 +6,96 @@
 * thankyou
   - utter_noworries
 
-## happy_path
+## story_greet
 * greet
   - utter_ask_options_type
 
-## happy_path1
-* early_leave
-  - utter_early_leave
-* thankyou
-  - utter_noworries
-
-
-##happy_path3
-* expense_compensation
-  - utter_expense_compensation
-* thankyou
-  - utter_noworries
-
-
-##happy_path4
+## story_days_off
 * days_off
   - days_off_form
   - form{"name":"days_off_form"}
   - form{"name":null}
-  - utter_confirmation
+  - utter_days_off
 * affirmation
   - action_days_off_mail
   - utter_mail_send
+  - action_restart	
 * thankyou
   - utter_noworries
   - action_restart	
 
-##unhappy_path
+## story_days_off2
 * days_off
   - days_off_form
   - form{"name":"days_off_form"}
   - form{"name":null}
-  - utter_confirmation
+  - utter_days_off
 * deny
-  - action_restart
+  - action_deactivate_form
   - utter_ask_options_type
-* days_off 
+* days_off
   - days_off_form
   - form{"name":"days_off_form"}
   - form{"name":null}
-  - utter_confirmation
+  - utter_days_off
 * affirmation
   - action_days_off_mail
   - utter_mail_send
 * thankyou
   - utter_noworries
-  - action_restart
 
+## story_early_leave
+* early_leave
+  - early_leave_form
+  - form{"name":"early_leave_form"}
+  - form{"name":null}
+  - utter_early_leave
+* affirmation
+  - action_early_leave_mail
+  - utter_mail_send
+  - action_restart	
+* thankyou
+  - utter_noworries
 
+## story_expense_compensation
+* expense_compensation
+  - expense_compensation_form
+  - form{"name":"expense_compensation_form"}
+  - form{"name":null}
+  - utter_expense_compensation
+* affirmation
+  - action_expense_compensation_mail
+  - utter_receipt
+  - action_restart	
+* thankyou
+  - utter_noworries
+
+## story_early_leave2
+* early_leave
+  - early_leave_form
+  - form{"name":"early_leave_form"}
+  - form{"name":null}
+  - utter_early_leave
+* deny
+  - action_deactivate_form
+  - utter_ask_options_type
+* early_leave
+  - early_leave_form
+  - form{"name":"early_leave_form"}
+  - form{"name":null}
+  - utter_early_leave
+
+## story_expense_compensation2
+* expense_compensation
+  - expense_compensation_form
+  - form{"name":"expense_compensation_form"}
+  - form{"name":null}
+  - utter_expense_compensation
+* deny
+  - action_deactivate_form
+  - utter_ask_options_type
+* expense_compensation
+  - expense_compensation_form
+  - form{"name":"expense_compensation_form"}
+  - form{"name":null}
+  - utter_expense_compensation
