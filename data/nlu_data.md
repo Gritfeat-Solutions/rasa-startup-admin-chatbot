@@ -50,27 +50,30 @@
 - cool, thanks
 - cool thank you
 
-## intent:meeting
-- hey! I want to schedule meeting
-- meeting
-- i want a meeting to be scheduled
-- meetings
-- invite for meetings
-- invite people for meeting
-- please schedule a meeting
-- schedule a meeting
-- meeting schedule
-- appoint meeting
-
 ## intent:inform
-- Monday
-- 5th May
-- Tomorrow
-- Today 
-- Wednesday
-- Friday 
-- 26th April
-- 14th May
+- [2019-04-16](date)
+- [2019-04-19](date)
+- [2019-04-17](date)
+- [2019-04-20](date)
+- [2019-04-28](date)
+- [2019-04-25](date)
+- [2019-04-29](date)
+- [2019-04-30](date)
+- [2019-05-01](date)
+- [09:30 am](time)
+- [10 am](time)
+- [10:30 am](time)
+- [12:30 pm](time)
+- [2 pm](time)
+- [4 pm](time)
+- [3:30 pm](time)
+- Rs. [200](money)
+- [150](money)
+- [Rs. 500](money) rupees
+- [400](money) rupees
+- Rs. [600](money)
+- Rs. [150](money)
+- [1000](money)	 rupees
 - [aayush@gritfeat.com](email)
 - [rojina@gritfeat.com](email)
 - [sujen@gritfeat.com](email)
