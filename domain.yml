@@ -2,7 +2,6 @@
 ---
 actions:
 - utter_ask_to
-- utter_slots_values
 - utter_ask_date
 - utter_days_off
 - utter_mail_send
@@ -14,19 +13,29 @@ actions:
 - utter_goodbye
 - utter_early_leave
 - utter_noworries
-- utter_wrong_format
-- action_slot_reset
+- utter_wrong_date
+- utter_wrong_time
 - action_days_off_mail
 - utter_ask_name
 - utter_ask_options_type
-- utter_confirmation
 - utter_expense_compensation
-- utter_confirm
+- utter_ask_request
+- utter_ask_time
+- early_leave_form
+- action_early_leave_mail
+- utter_ask_type
+- utter_ask_desc
+- utter_ask_amount
+- utter_receipt
+- expense_compensation_form
+- action_expense_compensation_mail
+- action_slot_reset
 entities:
 - date
 - days_off
 - time
 - name
+- money
 intents:
 - days_off
 - work_incharge
@@ -54,21 +63,37 @@ slots:
   reason:
     auto_fill: false
     type: unfeaturized
+  request:
+    auto_fill: false
+    type: unfeaturized
+  time:
+    auto_fill: false
+    type: unfeaturized
   requested_slot:
     type: unfeaturized
   to:
     auto_fill: false
     type: unfeaturized
+  date:
+    auto_fill: false
+    type: unfeaturized
+  type:
+    auto_fill: false
+    type: unfeaturized
+  desc:
+    auto_fill: false
+    type: unfeaturized
+  amount:
+    auto_fill: false
+    type: unfeaturized
 templates:
-  utter_ask_attendees:
-  - text: Please provide email of the attendees.
   utter_ask_from:
-  - text: Please provide the start date of your leave ( in the format YYYY-MM-DD )
+  - text: Please provide the start date of your leave (in the format YYYY-MM-DD)
   utter_ask_name:
   - text: What is your name?
-  - text: Please provide your name.
+  - text: Please provide your name
   utter_ask_options_type:
-  - text: Choose one of the following; Early leave, Days off or Expense compensation.
+  - text: Choose one of the following; Early leave, Days off or Expense compensation
   - buttons:
     - payload: Early leave
       title: Early leave
@@ -76,17 +101,15 @@ templates:
       title: Days off
     - payload: Expense compensation
       title: Expense compensation
-    text: Hey there! Please choose one of the option below
+    text: Hey there! Please choose one of the options below
   utter_ask_pending:
   - text: Do you have any pending tasks in progress? Anyone else in-charge?
   utter_ask_reason:
   - text: Provide the reason of your leave request
   utter_ask_to:
-  - text: Please provide the end date of your leave. Provide Same date if its a one
+  - text: Please provide the end date of your leave. Provide same date if its a one
       day leave request (in the format YYYY-MM-DD)
-  utter_confirm:
-  - text: I have sent meeting invitation to the attendees. Your meeting has been set.
-  utter_confirmation:
+  utter_days_off:
   - text: "I am going to submit days off request using the following parameters:\n
        - name: {name}\n 
        - from: {from}\n 
@@ -102,11 +125,47 @@ templates:
   - text: 'Hey there! Please choose one of the options:'
   - text: Hello! What can I help you find today?
   utter_mail_send:
-  - text: You request has been successfully submitted.
+  - text: Your request has been successfully submitted
   utter_noworries:
   - text: My pleasure.
   - text: You are welcome!
   utter_submit:
   - text: All done!
-  utter_wrong_format:
+  utter_wrong_date:
   - text: Incorrect date format, should be YYYY-MM-DD
+  utter_ask_request:
+  - text: Please provide the date  of your early leave (YYYY-MM-DD)
+  utter_ask_time:
+  - text: Please provide time of your early leave (HH:MM am/pm)
+  utter_early_leave:
+  - text: "I am going to submit leave early request using the following parameters:\n
+       - name: {name}\n
+       - date: {request}\n
+       - time: {time}\n
+       - reason: {reason}\nDo you wish to continue with these request?"
+  utter_ask_date:
+  - text: Provide the date of your purchase (YYYY-MM-DD)
+  utter_ask_type:
+  - buttons:
+    - payload: Lunch Expenses
+      title: Lunch Expenses
+    - payload: Office Purchases
+      title: Office Purchases
+    - payload: Others
+      title: Others
+    text: 'Choose your purchase type:'
+  utter_ask_desc: 
+  - text: Provide the list of purchased items
+  utter_ask_amount:
+  - text: Please specify your compensation amount in Rupees
+  utter_receipt:
+  - text: I've submitted your request. Please leave your receipt in the adminstration
+  utter_expense_compensation:
+  - text: "I am going to submit expense compensation request using the following parameters:\n
+       - name: {name}\n
+       - date: {date}\n
+       - type: {type}\n
+       - desc: {desc}\n
+       - amount: {amount}\n Do you wish to continue with these request?"
+  utter_wrong_time:
+  - text: Wrong time format (should be HH:MM am/pm)
