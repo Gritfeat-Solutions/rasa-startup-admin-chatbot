@@ -10,6 +10,28 @@ from rasa_core_sdk.forms import FormAction, REQUESTED_SLOT
 from rasa_core_sdk import Action
 from dateutil.parser import parse
 
+class GetName(Action):
+	def name(self):
+		return 'action_name'
+		
+	def run(self, dispatcher, tracker, domain):
+		import requests
+		
+		most_recent_state = tracker.current_state()
+		user = most_recent_state['sender_id']
+		bot = "" #bot-userid
+		name = user.split(bot)
+		for i in name:
+			if i != '':
+        			sid = i
+		headers = {
+    			'X-Auth-Token': '', #bot-auth-token
+    			'X-User-Id': ''  #bot-userid
+			}
+		r = requests.get('https://server-url/api/v1/users.info?userId={}'.format(sid), headers=headers,allow_redirects=False).json() #replace server-url with your own server url
+		first_name = r['user']['name']
+		return [SlotSet('name', first_name)]
+	
 class DaysOffForm(FormAction):
     """Example of a custom form action"""
 
