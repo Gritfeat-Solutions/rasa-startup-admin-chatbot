@@ -8,6 +8,7 @@
 
 ## story_greet
 * greet
+  - action_name
   - utter_ask_options_type
 
 ## story_days_off
