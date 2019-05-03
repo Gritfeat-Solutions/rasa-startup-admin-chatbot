@@ -2,55 +2,85 @@
 ---
 actions:
 - utter_ask_to
+- utter_ask_options_type
+- utter_submit
+- utter_wrong_time
+- utter_noworries
+- action_early_leave_mail
+- utter_early_leave
+- action_expense_compensation_mail
+- utter_mail_send
 - utter_ask_date
 - utter_days_off
-- utter_mail_send
-- utter_ask_pending
-- days_off_form
-- utter_greet
-- utter_submit
 - utter_ask_reason
-- utter_goodbye
-- utter_early_leave
-- utter_noworries
-- utter_wrong_date
-- utter_wrong_time
-- action_days_off_mail
+- utter_ask_type
 - utter_ask_name
-- utter_ask_options_type
+- utter_ask_pending
+- utter_greet
+- utter_goodbye
+- utter_ask_amount
+- utter_wrong_date
+- utter_ask_time
+- utter_receipt
+- utter_confirm
+- action_days_off_mail
 - utter_expense_compensation
 - utter_ask_request
-- utter_ask_time
-- early_leave_form
-- action_early_leave_mail
-- utter_ask_type
 - utter_ask_desc
-- utter_ask_amount
-- utter_receipt
-- expense_compensation_form
-- action_expense_compensation_mail
+- action_name
+- utter_range
+- action_library
+- utter_ask_book
+- utter_library
+- action_library_date
+- utter_next_book
+- action_purchase_mail
+- utter_ask_p_desc
+- utter_ask_qty
+- utter_ask_date_needed
+- utter_purchase_req
 - action_slot_reset
+
+forms:
+- days_off_form
+- expense_compensation_form
+- early_leave_form
+- library_form
+- purchase_req_form
+
 entities:
-- date
-- days_off
-- time
-- name
 - money
-intents:
-- days_off
-- work_incharge
+- time
+- date
 - name
+- early_leave
+- days_off
+- expense_compensation
+- book_request
+- quantity
+- purchase_req
+intents:
+- greet
 - days_off_reason
+- inform
+- name
+- work_incharge
 - affirmation
 - thankyou
-- inform
-- greet
 - bye
-- early_leave
-- expense_compensation
 - meeting
 - deny
+- options
 slots:
+  amount:
+    auto_fill: false
+    type: unfeaturized
+  date:
+    auto_fill: false
+    type: unfeaturized
+  desc:
+    auto_fill: false
+    type: unfeaturized
   from:
     auto_fill: false
     type: unfeaturized
@@ -66,56 +96,89 @@ slots:
   request:
     auto_fill: false
     type: unfeaturized
+  requested_slot:
+    type: unfeaturized
   time:
     auto_fill: false
     type: unfeaturized
-  requested_slot:
-    type: unfeaturized
   to:
-    auto_fill: false
-    type: unfeaturized
-  date:
     auto_fill: false
     type: unfeaturized
   type:
     auto_fill: false
     type: unfeaturized
-  desc:
+  book:
     auto_fill: false
-    type: unfeaturized
-  amount:
+    type: unfeaturized 
+  p_desc:
     auto_fill: false
-    type: unfeaturized
+    type: unfeaturized 
+  qty:
+    auto_fill: false
+    type: unfeaturized 
+  date_needed:
+    auto_fill: false
+    type: unfeaturized 
 templates:
+  utter_ask_amount:
+  - text: Please specify your compensation amount in Rupees
+  utter_ask_date:
+  - text: Provide the date of your purchase (YYYY-MM-DD)
+  utter_ask_desc:
+  - text: Provide the list of purchased items
   utter_ask_from:
   - text: Please provide the start date of your leave (in the format YYYY-MM-DD)
   utter_ask_name:
   - text: What is your name?
   - text: Please provide your name
   utter_ask_options_type:
-  - text: Choose one of the following; Early leave, Days off or Expense compensation
   - buttons:
     - payload: Early leave
-      title: Early leave
+      title: Early leave 
     - payload: Days off
       title: Days off
     - payload: Expense compensation
       title: Expense compensation
-    text: Hey there! Please choose one of the options below
+    - payload: Book Request
+      title: Book Request
+    - payload: Purchase Requisition
+      title: Purchase Requisition	
+    text: Hey {name}! I am Gritfeat admin-bot! How can I help?
   utter_ask_pending:
   - text: Do you have any pending tasks in progress? Anyone else in-charge?
   utter_ask_reason:
   - text: Provide the reason of your leave request
+  utter_ask_request:
+  - text: Please provide the date  of your early leave (YYYY-MM-DD)
+  utter_ask_time:
+  - text: Please provide time of your early leave (HH:MM am/pm)
   utter_ask_to:
   - text: Please provide the end date of your leave. Provide same date if its a one
       day leave request (in the format YYYY-MM-DD)
+  utter_ask_book:
+  - text: Provide the name of book you wish to request
+  utter_ask_type:
+  - buttons:
+    - payload: Lunch Expenses
+      title: Lunch Expenses
+    - payload: Office Purchases
+      title: Office Purchases
+    - payload: Others
+      title: Others
+    text: 'Choose your purchase type:'
+  utter_confirm:
+  - text: 'Do you wish to continue with these request?'
   utter_days_off:
-  - text: "I am going to submit days off request using the following parameters:\n
-       - name: {name}\n 
-       - from: {from}\n 
-       - to: {to}(same date for one day leave)\n\
-       - leave reason: {reason}\n 
-       - task & incharge: {pending}\nDo you wish to continue with these request?"
+  - text: "I am going to submit days off request using the following parameters:\n\
+      \ - name: {name}\n - from: {from}\n - to: {to}(same date for one day leave)\n\
+      - leave reason: {reason}\n - task & incharge: {pending} "
+  utter_early_leave:
+  - text: "I am going to submit leave early request using the following parameters:\n\
+      \ - name: {name}\n - date: {request}\n - time: {time}\n - reason: {reason} "
+  utter_expense_compensation:
+  - text: "I am going to submit expense compensation request using the following parameters:\n\
+      \ - name: {name}\n - date: {date}\n - type: {type}\n - desc: {desc}\n - amount:\
+      \ {amount} "
   utter_goodbye:
   - text: Talk to you later!
   - text: Have a good day.
@@ -129,43 +192,31 @@ templates:
   utter_noworries:
   - text: My pleasure.
   - text: You are welcome!
+  utter_receipt:
+  - text: I've submitted your request. Please leave your receipt in the adminstration
   utter_submit:
   - text: All done!
   utter_wrong_date:
   - text: Incorrect date format, should be YYYY-MM-DD
-  utter_ask_request:
-  - text: Please provide the date  of your early leave (YYYY-MM-DD)
-  utter_ask_time:
-  - text: Please provide time of your early leave (HH:MM am/pm)
-  utter_early_leave:
-  - text: "I am going to submit leave early request using the following parameters:\n
-       - name: {name}\n
-       - date: {request}\n
-       - time: {time}\n
-       - reason: {reason}\nDo you wish to continue with these request?"
-  utter_ask_date:
-  - text: Provide the date of your purchase (YYYY-MM-DD)
-  utter_ask_type:
-  - buttons:
-    - payload: Lunch Expenses
-      title: Lunch Expenses
-    - payload: Office Purchases
-      title: Office Purchases
-    - payload: Others
-      title: Others
-    text: 'Choose your purchase type:'
-  utter_ask_desc: 
-  - text: Provide the list of purchased items
-  utter_ask_amount:
-  - text: Please specify your compensation amount in Rupees
-  utter_receipt:
-  - text: I've submitted your request. Please leave your receipt in the adminstration
-  utter_expense_compensation:
-  - text: "I am going to submit expense compensation request using the following parameters:\n
-       - name: {name}\n
-       - date: {date}\n
-       - type: {type}\n
-       - desc: {desc}\n
-       - amount: {amount}\n Do you wish to continue with these request?"
   utter_wrong_time:
   - text: Wrong time format (should be HH:MM am/pm)
+  utter_range:
+  - text: I cannot set this date..Either it is from the past, or too much into the future!
+  utter_library:
+  - text: "I am going to submit book request using the following parameters:\n
+         - Book name: {book}\n
+         - Issue Date: {from}\n
+         - Due Date: {to}\n"
+  utter_next_book:
+  - text: Do you wish to request another book?
+  utter_ask_p_desc:
+  - text: Please mention description/name of products required
+  utter_ask_qty:
+  - text: Please provide the quantity of the item required
+  utter_ask_date_needed:
+  - text: Specify the date that you need it for
+  utter_purchase_req:
+  - text: "I am going to submit purchase requisition request using the following parameters:\n\
+        - Description: {p_desc}\n
+        - Quantity: {qty}\n
+        - Date needed: {date_needed}"
