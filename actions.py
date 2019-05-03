@@ -4,7 +4,7 @@ from typing import Dict, Text, Any, List, Union
 
 from rasa_core_sdk import ActionExecutionRejection
 from rasa_core_sdk import Tracker
-from rasa_core_sdk.events import SlotSet
+from rasa_core_sdk.events import SlotSet, AllSlotsReset
 from rasa_core_sdk.executor import CollectingDispatcher
 from rasa_core_sdk.forms import FormAction, REQUESTED_SLOT
 from rasa_core_sdk import Action
@@ -387,3 +387,181 @@ class ExpenseCompensationMail(Action):
 		smtp.login('EMAIL_ADDRESS', 'PASSWORD') #replace with your email and password
 		smtp.send_message(msg)
 
+class Library(FormAction):
+
+    def name(self):
+        #type: () -> Text
+        return "library_form"
+
+
+    @staticmethod
+    def required_slots(tracker: Tracker) -> List[Text]:
+
+        return ["book"]
+
+    def slot_mappings(self):
+
+        return {"book": self.from_text()}
+
+
+    def submit(self,
+               dispatcher: CollectingDispatcher,
+               tracker: Tracker,
+               domain: Dict[Text, Any]) -> List[Dict]:
+        """Define what the form has to do
+            after all required slots are filled"""
+
+        # utter submit template
+        dispatcher.utter_template('utter_submit', tracker)
+        return []
+
+
+
+class LibraryMail(Action):
+    def name(self):
+        return 'action_library'
+  
+    def run(self, dispatcher, tracker, domain):
+        import os
+        import smtplib
+        from email.message import EmailMessage
+        
+        book = tracker.get_slot('book')
+        issue = tracker.get_slot('from')
+        due = tracker.get_slot('to')
+        user = tracker.get_slot('name')
+
+        msg = EmailMessage()
+        msg['Subject'] = 'Book Request'
+        msg['From'] = 'sending_email_address'  #sender's email address
+        msg['To'] = 'receiving_email_address'  #receiver's email address
+        msg.set_content('Hey!, \n Our member \"{}\" has a book request\nName of the book: {}\nIssue Date:{}\nDue Date: {}\n Please Acknowledge the request. \n Sincerely, Gritfeat-bot'.format(user, book, issue, due)) 
+
+	with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+		smtp.login('EMAIL_ADDRESS', 'PASSWORD') #replace with your email and password
+		smtp.send_message(msg)
+
+class LibraryDate(Action):
+	def name(self):
+		return 'action_library_date'
+
+	def run(self, dispatcher, tracker, domain):
+		now = datetime.strftime(datetime.now(), '20%y-%m-%d')
+		due = datetime.strftime(datetime.now()+timedelta(14), '20%y-%m-%d')
+		return [SlotSet('from',now),SlotSet('to',due)]
+
+class PurchaseReq(FormAction):
+    def name(self):
+        return "purchase_req_form"
+
+
+    @staticmethod
+    def required_slots(tracker: Tracker) -> List[Text]:
+
+        return ["p_desc", "qty", "date_needed"]
+
+    def slot_mappings(self):
+
+        return {"p_desc": self.from_text(), 
+                "qty": [self.from_text(),self.from_entity(entity="quantity")],
+                "date_needed": self.from_text()}
+
+    @staticmethod
+    def date_validation(date_text) -> bool:
+        try:
+            datetime.strptime(date_text, '%Y-%m-%d')
+            return True
+        except:
+            return False
+
+    @staticmethod
+    def from_validation(date_text) -> bool:
+        start = parse(date_text)
+        now = datetime.strftime(datetime.now(), '20%y-%m-%d')
+        range = pd.date_range(start=now, end= datetime.strftime(datetime.now()+timedelta(30), '20%y-%m-%d'))
+        if start in (range): 
+            return True
+        else:
+            return False
+
+    def validate(self,
+                 dispatcher: CollectingDispatcher,
+                 tracker: Tracker,
+                 domain: Dict[Text, Any]) -> List[Dict]:
+        """Validate extracted requested slot
+            else reject the execution of the form action
+        """
+        # extract other slots that were not requested
+        # but set by corresponding entity
+        slot_values = self.extract_other_slots(dispatcher, tracker, domain)
+
+        # extract requested slot
+        slot_to_fill = tracker.get_slot(REQUESTED_SLOT)
+        if slot_to_fill:
+            slot_values.update(self.extract_requested_slot(dispatcher,
+                                                           tracker, domain))
+            if not slot_values:
+                # reject form action execution
+                # if some slot was requested but nothing was extracted
+                # it will allow other policies to predict another action
+                raise ActionExecutionRejection(self.name(),
+                                               "Failed to validate slot {0} "
+                                               "with action {1}"
+                                               "".format(slot_to_fill,
+                                                         self.name()))
+
+        # we'll check when validation failed in order
+        # to add appropriate utterances
+        for slot, value in slot_values.items():
+            if slot == 'date_needed':
+                if self.date_validation(value)==False:
+                    dispatcher.utter_template('utter_wrong_date',tracker)
+                    slot_values[slot] = None
+                elif self.from_validation(value)==False:
+                    dispatcher.utter_template('utter_range',tracker)
+                    slot_values[slot] = None
+
+        # validation succeed, set the slots values to the extracted values
+        return [SlotSet(slot, value) for slot, value in slot_values.items()]
+
+    def submit(self,
+               dispatcher: CollectingDispatcher,
+               tracker: Tracker,
+               domain: Dict[Text, Any]) -> List[Dict]:
+        """Define what the form has to do
+            after all required slots are filled"""
+
+        # utter submit template
+        dispatcher.utter_template('utter_submit', tracker)
+        return []
+
+class PurchaseReqMail(Action):
+    def name(self):
+        return 'action_purchase_mail'
+
+    def run(self, dispatcher, tracker, domain):
+        import os
+        import smtplib
+        from email.message import EmailMessage
+
+        desc = tracker.get_slot('p_desc')
+        quantity = tracker.get_slot('qty')
+        date = tracker.get_slot('date_needed')
+        user = tracker.get_slot('name')
+
+        msg = EmailMessage()
+        msg['Subject'] = 'Purchase Requisition Form'
+        msg['From'] = 'sending_email_address'  #sender's email address
+        msg['To'] = 'receiving_email_address'  #receiver's email address
+        msg.set_content('Hey Gritfeat!,\nOur member \"{}\" has submitted a purchase requisition form with following description:\nItem Description: {}\nQuantity: {}\nDate needed: {}\nPlease acknowledge this request. \nYour\'s sincerely,\nGritfeat-bot'.format(user, desc, quantity, date))
+	
+	with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+		smtp.login('EMAIL_ADDRESS', 'PASSWORD') #replace with your email and password
+		smtp.send_message(msg)
+
+class ActionSlotReset(Action): 
+    def name(self): 
+        return 'action_slot_reset'
+
+    def run(self, dispatcher, tracker, domain): 
+        return[AllSlotsReset()]
