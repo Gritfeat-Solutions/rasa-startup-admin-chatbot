@@ -306,7 +306,7 @@ class ExpenseCompensation(FormAction):
     @staticmethod
     def date_validation(date_text) -> bool:
         try:
-            datetime.datetime.strptime(date_text, '%Y-%m-%d')
+            datetime.strptime(date_text, '%Y-%m-%d')
             return True
         except:
             return False
