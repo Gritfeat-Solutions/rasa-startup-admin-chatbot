@@ -27,7 +27,7 @@ Before training dialogue model edit domain.yml file as required. (for example, a
 The parameter provided are configuration file, data and path to save NLU model along with fixed name.
 
 3. In a new terminal start the server for the custom action by running:
-`make action-server`
+`python3 -m rasa_core_sdk.endpoint --actions actions`
 
 4. To run the bot in terminal  
 `python3 -m rasa_core.run -d models/current/dialogue -u models/current/nlu --endpoints endpoints.yml`  
