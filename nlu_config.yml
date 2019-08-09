@@ -9,3 +9,12 @@ pipeline:
 - name: "ner_synonyms"
 - name: "intent_classifier_sklearn"
 
+policies:
+  - name: FormPolicy
+  - name: KerasPolicy
+    epochs: 100 
+    max_history: 6
+  - name: MemoizationPolicy
+    max_history: 6
+  - name: MappingPolicy
+
