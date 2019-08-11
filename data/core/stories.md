@@ -232,3 +232,7 @@
   - action_restart
 * thankyou
   - utter_noworries
+  
+  ## story_telljoke
+* telljoke
+  - action_tell_joke
