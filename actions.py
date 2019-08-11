@@ -1,37 +1,39 @@
 # -*- coding: utf-8 -*-
-import datetime
+from datetime import datetime, timedelta
+import pandas as pd
 from typing import Dict, Text, Any, List, Union
 
-from rasa_core_sdk import ActionExecutionRejection
-from rasa_core_sdk import Tracker
-from rasa_core_sdk.events import SlotSet, AllSlotsReset
-from rasa_core_sdk.executor import CollectingDispatcher
-from rasa_core_sdk.forms import FormAction, REQUESTED_SLOT
-from rasa_core_sdk import Action
+from rasa_sdk import ActionExecutionRejection
+from rasa_sdk import Tracker
+from rasa_sdk.events import SlotSet, AllSlotsReset
+from rasa_sdk.executor import CollectingDispatcher
+from rasa_sdk.forms import FormAction, REQUESTED_SLOT
+from rasa_sdk import Action
 from dateutil.parser import parse
 
 class GetName(Action):
-	def name(self):
-		return 'action_name'
-		
-	def run(self, dispatcher, tracker, domain):
-		import requests
-		
-		most_recent_state = tracker.current_state()
-		user = most_recent_state['sender_id']
-		bot = "" #bot-userid
-		name = user.split(bot)
-		for i in name:
-			if i != '':
-        			sid = i
-		headers = {
-    			'X-Auth-Token': '', #bot-auth-token
-    			'X-User-Id': ''  #bot-userid
-			}
-		r = requests.get('https://server-url/api/v1/users.info?userId={}'.format(sid), headers=headers,allow_redirects=False).json() #replace server-url with your own server url
-		first_name = r['user']['name']
-		return [SlotSet('name', first_name)]
-	
+    def name(self):
+        return 'action_name'
+        
+    def run(self, dispatcher, tracker, domain):
+        import requests
+        
+        most_recent_state = tracker.current_state()
+        user = most_recent_state['sender_id']
+        bot = "" #bot-userid
+        name = user.split(bot)
+        for i in name:
+            if i != '':
+                sid = i
+        headers = {
+                'X-Auth-Token': '', #bot-auth-token
+                'X-User-Id': ''  #bot-userid
+            }
+        r = requests.get('https://server-url/api/v1/users.info?userId={}'.format(sid), headers=headers,allow_redirects=False).json() #replace server-url with your own server url
+        first_name = r['user']['name']
+        return [SlotSet('name', first_name)]
+
+
 class DaysOffForm(FormAction):
     """Example of a custom form action"""
 
@@ -58,62 +60,83 @@ class DaysOffForm(FormAction):
             or a list of them, where a first match will be picked"""
 
         return {"name": [self.from_entity(entity="name"),self.from_text()],
-                "from": [self.from_text()],
-                "to": [self.from_text()],
+                "from": [self.from_entity(entity='time')],
+                "to": [self.from_entity(entity='time')],
                 "reason": [self.from_text(intent='days_off_reason'),
                                 self.from_text()],
                 "pending": [self.from_text(intent='pending'), self.from_text()]}
+
+
     @staticmethod
-    def date_validation(date_text) -> bool:
-        try:
-            datetime.datetime.strptime(date_text, '%Y-%m-%d')
+    def from_validation(date_text) -> bool:
+        start = parse(date_text)
+        now = datetime.strftime(datetime.now(), '20%y-%m-%d')
+        range = pd.date_range(start=now, end= datetime.strftime(datetime.now()+timedelta(30), '20%y-%m-%d'))
+        if start in (range): 
             return True
-        except:
+        else:
             return False
 
+    @staticmethod
+    def to_validation(to, start) -> bool:
+        #to = datetime.strptime(date_text, '%Y-%m-%d')
+        #to = parse(to)
+        #start = tracker.get_slot('from')
+        strt = datetime.strptime(start, '20%y-%m-%d')
+        range = pd.date_range(start=strt, end= datetime.strftime(strt+timedelta(30), '20%y-%m-%d'))
+        if to in (range): 
+            return True
+        else:
+            return False
 
-    def validate(self,
-                 dispatcher: CollectingDispatcher,
-                 tracker: Tracker,
-                 domain: Dict[Text, Any]) -> List[Dict]:
-        """Validate extracted requested slot
-            else reject the execution of the form action
-        """
-        # extract other slots that were not requested
-        # but set by corresponding entity
-        slot_values = self.extract_other_slots(dispatcher, tracker, domain)
+    def validate_from(self,value,dispatcher,tracker,domain):
+        if any(tracker.get_latest_entity_values("time")):
+            if isinstance(value,dict):
+                from_date = value['from'][0:10]
+                to_date = value['to'][0:10]
 
-        # extract requested slot
-        slot_to_fill = tracker.get_slot(REQUESTED_SLOT)
-        if slot_to_fill:
-            slot_values.update(self.extract_requested_slot(dispatcher,
-                                                           tracker, domain))
-            if not slot_values:
-                # reject form action execution
-                # if some slot was requested but nothing was extracted
-                # it will allow other policies to predict another action
-                raise ActionExecutionRejection(self.name(),
-                                               "Failed to validate slot {0} "
-                                               "with action {1}"
-                                               "".format(slot_to_fill,
-                                                         self.name()))
+                if self.from_validation(from_date)==False:
+                    dispatcher.utter_template('utter_range',tracker)
+                    return{"from":None}
+                    
+                    if self.to_validation(to_date,from_date)==False:
+                        dispatcher.utter_template('utter_range',tracker)
+                        return{"to":None}
+                else:    
+                    return {
+                        'from': value['from'][0:10],
+                        'to': datetime.strftime(parse(value['to'][0:10])- timedelta(days=1),"%Y-%m-%d")
+                    }
+            else:
+                from_date = value[0:10]
+                if self.from_validation(from_date)==False:
+                    dispatcher.utter_template('utter_range',tracker)
+                    return{"from":None}
+                else:
+                    return {'from':value[0:10]}
 
-        # we'll check when validation failed in order
-        # to add appropriate utterances
-        for slot, value in slot_values.items():
-            if slot == 'from':
-                if self.date_validation(value)==False:
-                    dispatcher.utter_template('utter_wrong_date',tracker)
-                    slot_values[slot] = None
-
-            if slot == 'to':
-                if self.date_validation(value)==False:
-                    dispatcher.utter_template('utter_wrong_date',tracker)
-                    slot_values[slot] = None
+        else:
+            # no entity was picked up, we want to ask again
+            dispatcher.utter_template("utter_no_date", tracker)
+            return {"from": None}
 
 
-        # validation succeed, set the slots values to the extracted values
-        return [SlotSet(slot, value) for slot, value in slot_values.items()]
+    def validate_to(self,value,dispatcher,tracker,domain):
+        if any(tracker.get_latest_entity_values("time")):
+            # entity was picked up, validate slot
+            if isinstance(value,dict):
+                to_date = value['to'][0:15]
+            else:
+                to_date = value[0:10]
+            if self.to_validation(to_date,tracker.get_slot('from'))==False:
+                dispatcher.utter_template('utter_range',tracker)
+                return {"to": None}
+            else:
+                return {"to": to_date}
+        else:
+            # no entity was picked up, we want to ask again
+            dispatcher.utter_template("utter_no_date", tracker)
+            return {"to": None}
 
     def submit(self,
                dispatcher: CollectingDispatcher,
@@ -123,34 +146,33 @@ class DaysOffForm(FormAction):
             after all required slots are filled"""
 
         # utter submit template
-        dispatcher.utter_template('utter_submit', tracker)
+        dispatcher.utter_template('utter_days_ off', tracker)
         return []
 
 class DaysOffMail(Action):
-	def name(self):
-		return 'action_days_off_mail'
-	def run(self, dispatcher, tracker, domain):
-		import os
-		import smtplib
-		from email.message import EmailMessage
-		
-		start = tracker.get_slot('from')
-		end = tracker.get_slot('to')
-		reason = tracker.get_slot('reason')
-		pending = tracker.get_slot('pending')
-		user = tracker.get_slot('name')
+    def name(self):
+        return 'action_days_off_mail'
+    def run(self, dispatcher, tracker, domain):
+        import os
+        import smtplib
+        from email.message import EmailMessage
+    
+        start = tracker.get_slot('from')
+        end = tracker.get_slot('to')
+        reason = tracker.get_slot('reason')
+        pending = tracker.get_slot('pending')
+        user = tracker.get_slot('name')
 
+        msg = EmailMessage()
+        msg['Subject'] = 'Days Off Request'
+        msg['From'] = 'sending_email_address' #sender's email address
+        msg['To'] = 'receiving_email_address' #receiver's email address
 
-		msg = EmailMessage()
-		msg['Subject'] = 'Days Off Request'
-		msg['From'] = 'sending_email_address' #sender's email address
-		msg['To'] = 'receiving_email_address' #receiver's email address
+        msg.set_content('Hey Admins!,\nOur member \"{}\" has submitted a days off request starting from \"{}\" to \"{}\" (if both dates are same, its a one day leave request).\nThe reason for the leave request: {}.\nTask and Incharge: {}.\nPlease acknowledge this request. \nYour\'s sincerely,\nGritfeat-bot'.format(user, start, end, reason, pending)) 
 
-		msg.set_content('Hi,\nOur member \"{}\" has submitted a days off request starting from \"{}\" to \"{}\" (if both dates are same, its a one day leave request).\nThe reason for the leave request: {}.\nTask and Incharge: {}.\nPlease acknowledge this request. \nYour\'s sincerely,\nGritfeat-bot'.format(user, start, end, reason, pending)) 
-
-		with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-			smtp.login('EMAIL_ADDRESS', 'PASSWORD') #replace with your email and password
-			smtp.send_message(msg)
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login('EMAIL_ADDRESS', 'PASSWORD') #replace with your email and password
+            smtp.send_message(msg)
 
 
 class EarlyLeaveForm(FormAction):
@@ -176,71 +198,69 @@ class EarlyLeaveForm(FormAction):
             or a list of them, where a first match will be picked"""
         
         return {"name": [self.from_entity(entity="name"),self.from_text()],
-                "request": [self.from_text(),self.from_entity(entity='date', intent='inform')],
-                "time": [self.from_text(),self.from_entity(entity='time', intent='inform')],
+                "request": [self.from_entity('time')],
+                "time": [self.from_entity(entity='time')],
                 "reason": [self.from_text(intent="reason"), self.from_text()]
                 }
 
     @staticmethod
     def date_validation(date_text) -> bool:
         try:
-            datetime.datetime.strptime(date_text, '%Y-%m-%d')
+            datetime.strptime(date_text, '%Y-%m-%d')
             return True
         except:
             return False
 
     @staticmethod
-    def time_validation(time_text) -> bool:
-        try:
-            date = parse(time_text)
-            datetime.datetime.strftime(date,'%H:%M %p')
+    def from_validation(date_text) -> bool:
+        start = parse(date_text)
+        now = datetime.strftime(datetime.now(), '20%y-%m-%d')
+        range = pd.date_range(start=now, end= datetime.strftime(datetime.now()+timedelta(30), '%Y-%m-%d'))
+        if start in (range): 
             return True
-        except:
+        else:
             return False
 
-    def validate(self,
-                 dispatcher: CollectingDispatcher,
-                 tracker: Tracker,
-                 domain: Dict[Text, Any]) -> List[Dict]:
-        """Validate extracted requested slot
-            else reject the execution of the form action
-        """
-        # extract other slots that were not requested
-        # but set by corresponding entity
-        slot_values = self.extract_other_slots(dispatcher, tracker, domain)
+    @staticmethod
+    def time_validation(time_text) -> bool:
+        if (parse('13:00') <= parse(time_text)) & (parse('17:00') >= parse(time_text)):
+            return True
+        else:
+            return False
 
-        # extract requested slot
-        slot_to_fill = tracker.get_slot(REQUESTED_SLOT)
-        if slot_to_fill:
-            slot_values.update(self.extract_requested_slot(dispatcher,
-                                                           tracker, domain))
-            if not slot_values:
-                # reject form action execution
-                # if some slot was requested but nothing was extracted
-                # it will allow other policies to predict another action
-                raise ActionExecutionRejection(self.name(),
-                                               "Failed to validate slot {0} "
-                                               "with action {1}"
-                                               "".format(slot_to_fill,
-                                                         self.name()))
 
-        # we'll check when validation failed in order
-        # to add appropriate utterances
-        for slot, value in slot_values.items():
-            if slot == 'request':
-                if self.date_validation(value)==False:
-                    dispatcher.utter_template('utter_wrong_date',tracker)
-                    slot_values[slot] = None
+    def validate_request(self,value,dispatcher,tracker,domain):
+        if any(tracker.get_latest_entity_values("time")):
+            date = value[0:10]
+            if self.from_validation(date)==False:
+                dispatcher.utter_template('utter_range',tracker)
+                return {"request":None}
+            else:
+                return {"request":date}
+        else:
+            # no entity was picked up, we want to ask again
+            dispatcher.utter_template("utter_no_date", tracker)
+            return {"to": None}
 
-            if slot == 'time':
-                if self.time_validation(value)==False:
+    def validate_time(self,value,dispatcher,tracker,domain):
+        if any(tracker.get_latest_entity_values("time")):
+            if value[11:16] != '00:00':
+                time = datetime.strftime(parse(value[11:16]),format = "%I:%M %p")
+                if self.time_validation(time)==False:
                     dispatcher.utter_template('utter_wrong_time',tracker)
-                    slot_values[slot] = None
+                    return{"time":None}
+                else:
+                    return{"time":time}
+            else:
+                return{"time":None}
 
 
+            # if self.time_validation(time)==False:
+            #     dispatcher.utter_template('utter_wrong_time',tracker)
+            #     return{"time":None}
+            # else:
+            #     return{"time":time}
 
-        # validation succeed, set the slots values to the extracted values
-        return [SlotSet(slot, value) for slot, value in slot_values.items()]
 
     def submit(self,
                dispatcher: CollectingDispatcher,
@@ -250,7 +270,7 @@ class EarlyLeaveForm(FormAction):
             after all required slots are filled"""
 
         # utter submit template
-        dispatcher.utter_template('utter_submit', tracker)
+        dispatcher.utter_template('utter_early_leave', tracker)
         return []
 
 class EarlyLeaveMail(Action):
@@ -266,17 +286,15 @@ class EarlyLeaveMail(Action):
         reason = tracker.get_slot('reason')
         user = tracker.get_slot('name')
 
-	msg = EmailMessage()
+        msg = EmailMessage()
         msg['Subject'] = 'Leave Early Request'
-	msg['From'] = 'sending_email_address' #sender's email address
-	msg['To'] = 'receiving_email_address' #receiver's email address
+        msg['From'] = 'sending_email_address' #sender's email address
+        msg['To'] = 'receiving_email_address' #receiver's email address
+        msg.set_content('Hey Admins!,\nOur member \"{}\" has submitted a leave early request.\nEarly leave Date: \"{}\"\nLeaving Time: \"{}\".\nThe reason for the request is \"{}\".\nPlease acknowledge this request. \nYour\'s sincerely,\nGritfeat-bot'.format(user, request, time, reason)) 
 
-
-        msg.set_content('Hi,\nOur member \"{}\" has submitted a leave early request.\nEarly leave Date: \"{}\"\nLeaving Time: \"{}\".\nThe reason for the request is \"{}\".\nPlease acknowledge this request. \nYour\'s sincerely,\nYour-bot'.format(user, request, time, reason)) 
-
-	with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-		smtp.login('EMAIL_ADDRESS', 'PASSWORD') #replace with your email and password
-		smtp.send_message(msg)
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login('EMAIL_ADDRESS', 'PASSWORD') #replace with your email and password
+            smtp.send_message(msg)
 
 
 class ExpenseCompensation(FormAction):
@@ -290,14 +308,13 @@ class ExpenseCompensation(FormAction):
     @staticmethod
     def required_slots(tracker:Tracker) -> List[Text]:
 
-
         return ["name", "date", "type", "desc", "amount"]
 
     def slot_mappings(self):
         # type: () -> Dict[Text: Union[Dict, List[Dict]]]
 
         return {"name": [self.from_entity(entity="name"),self.from_text()],
-                "date": self.from_text(),
+                "date": self.from_entity(entity="time"),
                 "type": self.from_text(),
                 "desc": self.from_text(),
                 "amount": self.from_entity(entity='money', intent='inform')}
@@ -311,43 +328,17 @@ class ExpenseCompensation(FormAction):
         except:
             return False
 
-    def validate(self,
-                 dispatcher: CollectingDispatcher,
-                 tracker: Tracker,
-                 domain: Dict[Text, Any]) -> List[Dict]:
-        """Validate extracted requested slot
-            else reject the execution of the form action
-        """
-        # extract other slots that were not requested
-        # but set by corresponding entity
-        slot_values = self.extract_other_slots(dispatcher, tracker, domain)
-
-        # extract requested slot
-        slot_to_fill = tracker.get_slot(REQUESTED_SLOT)
-        if slot_to_fill:
-            slot_values.update(self.extract_requested_slot(dispatcher,
-                                                           tracker, domain))
-            if not slot_values:
-                # reject form action execution
-                # if some slot was requested but nothing was extracted
-                # it will allow other policies to predict another action
-                raise ActionExecutionRejection(self.name(),
-                                               "Failed to validate slot {0} "
-                                               "with action {1}"
-                                               "".format(slot_to_fill,
-                                                         self.name()))
-
-        # we'll check when validation failed in order
-        # to add appropriate utterances
-        for slot, value in slot_values.items():
-            if slot == 'date':
-                if self.date_validation(value)==False:
-                    dispatcher.utter_template('utter_wrong_date',tracker)
-                    slot_values[slot] = None
-
-
-        # validation succeed, set the slots values to the extracted values
-        return [SlotSet(slot, value) for slot, value in slot_values.items()]
+    def validate_date(self,value,dispatcher,tracker,domain):
+        if any(get_latest_entity_values('time')):
+            date = value[0:10]
+            if self.date_validation(date)==False:
+                dispatcher.utter_template('utter_wrong_date',tracker)
+                return{'date':None}
+            else:
+                return{'date':None}
+        else:
+            dispatcher.utter_template('utter_no_date',tracker)
+            return{'date': None}
 
     def submit(self,
                dispatcher: CollectingDispatcher,
@@ -357,7 +348,7 @@ class ExpenseCompensation(FormAction):
             after all required slots are filled"""
 
         # utter submit template
-        dispatcher.utter_template('utter_submit', tracker)
+        dispatcher.utter_template('utter_expense_compensation', tracker)
         return []
 
 class ExpenseCompensationMail(Action):
@@ -375,17 +366,15 @@ class ExpenseCompensationMail(Action):
         amount = tracker.get_slot('amount')
         user = tracker.get_slot('name')
 
-	msg = EmailMessage()
+        msg = EmailMessage()
         msg['Subject'] = 'Expense Compensation Request'
-	msg['From'] = 'sending_email_address' #sender's email address
-	msg['To'] = 'receiving_email_address' #receiver's email address
+        msg['From'] = 'sending_email_address' #sender's email address
+        msg['To'] = 'receiving_email_address' #receiver's email address
 
-
-        msg.set_content('Hi, \n Our member \"{}\" has an expense compensation request of Rs. {} for items \"{}\". Purchased on \"{}\".\n Please Acknowledge the request. \n Sincerely, Your-bot'.format(user, amount, desc, date)) 
-
-	with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-		smtp.login('EMAIL_ADDRESS', 'PASSWORD') #replace with your email and password
-		smtp.send_message(msg)
+        msg.set_content('Hey Admins!, \n Our member \"{}\" has an expense compensation request of Rs. {} for items \"{}\". Purchased on \"{}\".\n Please Acknowledge the request. \n Sincerely, Gritfeat-bot'.format(user, amount, desc, date)) 
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login('EMAIL_ADDRESS', 'PASSWORD') #replace with your email and password
+            smtp.send_message(msg)
 
 class Library(FormAction):
 
@@ -412,7 +401,7 @@ class Library(FormAction):
             after all required slots are filled"""
 
         # utter submit template
-        dispatcher.utter_template('utter_submit', tracker)
+        dispatcher.utter_template('utter_libary', tracker)
         return []
 
 
@@ -433,22 +422,22 @@ class LibraryMail(Action):
 
         msg = EmailMessage()
         msg['Subject'] = 'Book Request'
-        msg['From'] = 'sending_email_address'  #sender's email address
-        msg['To'] = 'receiving_email_address'  #receiver's email address
-        msg.set_content('Hey!, \n Our member \"{}\" has a book request\nName of the book: {}\nIssue Date:{}\nDue Date: {}\n Please Acknowledge the request. \n Sincerely, Gritfeat-bot'.format(user, book, issue, due)) 
+        msg['Subject'] = 'Expense Compensation Request'
+        msg['From'] = 'sending_email_address' #sender's email address
+        msg.set_content('Hey Admins!, \n Our member \"{}\" has a book request\nName of the book: {}\nIssue Date:{}\nDue Date: {}\n Please Acknowledge the request. \n Sincerely, Gritfeat-bot'.format(user, book, issue, due)) 
 
-	with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-		smtp.login('EMAIL_ADDRESS', 'PASSWORD') #replace with your email and password
-		smtp.send_message(msg)
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login('EMAIL_ADDRESS', 'PASSWORD') #replace with your email and password
+            smtp.send_message(msg)
 
 class LibraryDate(Action):
-	def name(self):
-		return 'action_library_date'
+    def name(self):
+        return 'action_library_date'
 
-	def run(self, dispatcher, tracker, domain):
-		now = datetime.strftime(datetime.now(), '20%y-%m-%d')
-		due = datetime.strftime(datetime.now()+timedelta(14), '20%y-%m-%d')
-		return [SlotSet('from',now),SlotSet('to',due)]
+    def run(self, dispatcher, tracker, domain):
+        now = datetime.strftime(datetime.now(), '20%y-%m-%d')
+        due = datetime.strftime(datetime.now()+timedelta(14), '20%y-%m-%d')
+        return [SlotSet('from',now),SlotSet('to',due)]
 
 class PurchaseReq(FormAction):
     def name(self):
@@ -484,45 +473,18 @@ class PurchaseReq(FormAction):
         else:
             return False
 
-    def validate(self,
-                 dispatcher: CollectingDispatcher,
-                 tracker: Tracker,
-                 domain: Dict[Text, Any]) -> List[Dict]:
-        """Validate extracted requested slot
-            else reject the execution of the form action
-        """
-        # extract other slots that were not requested
-        # but set by corresponding entity
-        slot_values = self.extract_other_slots(dispatcher, tracker, domain)
-
-        # extract requested slot
-        slot_to_fill = tracker.get_slot(REQUESTED_SLOT)
-        if slot_to_fill:
-            slot_values.update(self.extract_requested_slot(dispatcher,
-                                                           tracker, domain))
-            if not slot_values:
-                # reject form action execution
-                # if some slot was requested but nothing was extracted
-                # it will allow other policies to predict another action
-                raise ActionExecutionRejection(self.name(),
-                                               "Failed to validate slot {0} "
-                                               "with action {1}"
-                                               "".format(slot_to_fill,
-                                                         self.name()))
-
-        # we'll check when validation failed in order
-        # to add appropriate utterances
-        for slot, value in slot_values.items():
-            if slot == 'date_needed':
-                if self.date_validation(value)==False:
-                    dispatcher.utter_template('utter_wrong_date',tracker)
-                    slot_values[slot] = None
-                elif self.from_validation(value)==False:
-                    dispatcher.utter_template('utter_range',tracker)
-                    slot_values[slot] = None
-
-        # validation succeed, set the slots values to the extracted values
-        return [SlotSet(slot, value) for slot, value in slot_values.items()]
+    def validate_date_needed(self,value,dispatcher,tracker,domain):
+        if any(tracker.get_latest_entity_values("time")):
+            date = value[0:10]
+            if self.from_validation(date)==False:
+                dispatcher.utter_template('utter_range',tracker)
+                return {"request":None}
+            else:
+                return {"request":date}
+        else:
+            # no entity was picked up, we want to ask again
+            dispatcher.utter_template("utter_no_date", tracker)
+            return {"to": None}
 
     def submit(self,
                dispatcher: CollectingDispatcher,
@@ -553,11 +515,12 @@ class PurchaseReqMail(Action):
         msg['Subject'] = 'Purchase Requisition Form'
         msg['From'] = 'sending_email_address'  #sender's email address
         msg['To'] = 'receiving_email_address'  #receiver's email address
-        msg.set_content('Hey Gritfeat!,\nOur member \"{}\" has submitted a purchase requisition form with following description:\nItem Description: {}\nQuantity: {}\nDate needed: {}\nPlease acknowledge this request. \nYour\'s sincerely,\nGritfeat-bot'.format(user, desc, quantity, date))
-	
-	with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
-		smtp.login('EMAIL_ADDRESS', 'PASSWORD') #replace with your email and password
-		smtp.send_message(msg)
+        msg.set_content('Hey Admins!,\nOur member \"{}\" has submitted a purchase requisition form with following description:\nItem Description: {}\nQuantity: {}\nDate needed: {}\nPlease acknowledge this request. \nYour\'s sincerely,\nGritfeat-bot'.format(user, desc, quantity, date))
+
+        with smtplib.SMTP_SSL('smtp.gmail.com', 465) as smtp:
+            smtp.login('EMAIL_ADDRESS', 'PASSWORD') #replace with your email and password
+            smtp.send_message(msg)
+
 
 class ActionSlotReset(Action): 
     def name(self): 
@@ -565,3 +528,17 @@ class ActionSlotReset(Action):
 
     def run(self, dispatcher, tracker, domain): 
         return[AllSlotsReset()]
+
+class TellJoke(Action):
+    def name(self):
+        return 'action_tell_joke'
+
+    def run(self,dispatcher,tracker,domain):
+        import json
+        import requests 
+        headers = {'Accept': 'application/json'}
+        request = json.loads(requests.get('https://icanhazdadjoke.com', headers= headers).text)  # make an api call
+        joke = request['joke'] 
+
+        dispatcher.utter_message(joke)
+        return[]
