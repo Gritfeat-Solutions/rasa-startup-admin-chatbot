@@ -167,6 +167,9 @@ templates:
   utter_purchase_req:
   - text: "I am going to submit purchase requisition request using the following parameters:\n\
       - Description: {p_desc}\n - Quantity: {qty}\n - Date needed: {date_needed}"
+  utter_no_date:
+    - text: Date not provided. Please provide date
+
 actions:
 - utter_ask_to
 - utter_ask_options_type
@@ -208,6 +211,7 @@ actions:
 - utter_purchase_req
 - action_slot_reset
 - action_tell_joke
+- utter_no_date
 forms:
 - days_off_form
 - expense_compensation_form
