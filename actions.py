@@ -146,7 +146,7 @@ class DaysOffForm(FormAction):
             after all required slots are filled"""
 
         # utter submit template
-        dispatcher.utter_template('utter_days_ off', tracker)
+        dispatcher.utter_template('utter_submit', tracker)
         return []
 
 class DaysOffMail(Action):
@@ -270,7 +270,7 @@ class EarlyLeaveForm(FormAction):
             after all required slots are filled"""
 
         # utter submit template
-        dispatcher.utter_template('utter_early_leave', tracker)
+        dispatcher.utter_template('utter_submit', tracker)
         return []
 
 class EarlyLeaveMail(Action):
@@ -348,7 +348,7 @@ class ExpenseCompensation(FormAction):
             after all required slots are filled"""
 
         # utter submit template
-        dispatcher.utter_template('utter_expense_compensation', tracker)
+        dispatcher.utter_template('utter_submit', tracker)
         return []
 
 class ExpenseCompensationMail(Action):
@@ -401,7 +401,7 @@ class Library(FormAction):
             after all required slots are filled"""
 
         # utter submit template
-        dispatcher.utter_template('utter_libary', tracker)
+        dispatcher.utter_template('utter_submit', tracker)
         return []
 
 
