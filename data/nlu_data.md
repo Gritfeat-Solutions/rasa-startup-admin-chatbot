@@ -32,6 +32,7 @@
 - hello is anybody there
 - hello robot
 - hi
+- hey again
 
 ## intent:thankyou
 - Thanks
@@ -52,22 +53,6 @@
 
 
 ## intent:inform
-- [2019-04-16](date)
-- [2019-04-19](date)
-- [2019-04-17](date)
-- [2019-04-20](date)
-- [2019-04-28](date)
-- [2019-04-25](date)
-- [2019-04-29](date)
-- [2019-04-30](date)
-- [2019-05-01](date)
-- [09:30 am](time)
-- [10 am](time)
-- [10:30 am](time)
-- [12:30 pm](time)
-- [2 pm](time)
-- [4 pm](time)
-- [3:30 pm](time)
 - Rs. [200](money)
 - [150](money)
 - [Rs. 500](money) rupees
@@ -138,6 +123,13 @@
 - noope
 - do you have something else
 - no this does not work for me
+- nooo wait
+- sorry. made a mistake
+- ok i got a wrong end date. i need it fixed
+- sorry made a mistake. lets do this from the beginning
+- mistake on my reason. how do i fix it?
+- need to fix my pending tasks
+- wait theres a typo
 
 ## intent: options
 - [early leave](early_leave)
@@ -161,8 +153,20 @@
 - [Request a book](book_request)
 - [book request](book_request)
 - [Book Requests](book_request)
-- [Purchase Requisition](purchase_Sreq)
+- [Purchase Requisition](purchase_req)
 - [Purchase Req](purchase_req)
 - [Purchase requisition](purchase_req)
 - [purchase Requisition](purchase_req)
 - [purchase requisition](purchase_req)
+
+## intent: telljoke
+- tell me a joke
+- i am bored at work. can you tell a joke?
+- joke
+- make a joke
+- make me laugh
+- crack a joke
+- i am free now. tell a joke
+- i need a laughter medicine
+- laughing
+- really bored. make me laugh
