@@ -478,13 +478,13 @@ class PurchaseReq(FormAction):
             date = value[0:10]
             if self.from_validation(date)==False:
                 dispatcher.utter_template('utter_range',tracker)
-                return {"request":None}
+                return {"date_needed":None}
             else:
-                return {"request":date}
+                return {"date_needed":date}
         else:
             # no entity was picked up, we want to ask again
             dispatcher.utter_template("utter_no_date", tracker)
-            return {"to": None}
+            return {"date_needed": None}
 
     def submit(self,
                dispatcher: CollectingDispatcher,
