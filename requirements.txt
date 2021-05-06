@@ -16,7 +16,7 @@ networkx==2.3
 pykwalify==1.7.0
 coloredlogs==10.0
 flask==1.1.1
-flask_cors==3.0.8
+flask_cors==3.0.9
 scikit-learn==0.20.3
 colorhash==1.0.2
 pika==1.0.1
