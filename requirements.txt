@@ -7,7 +7,7 @@ future==0.17.1
 numpy==1.16.4
 ruamel.yaml==0.15.100
 requests==2.22.0
-tensorflow==1.13.2
+tensorflow==2.5.3
 h5py==2.9.0
 apscheduler==3.6.1
 tqdm==4.32.2
